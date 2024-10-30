@@ -1,11 +1,3 @@
-# GO Shell
-
-This is a golang package used to imitate piping utilities
-in the shell
-
-## Example
-
-```sh
 package main
 
 import (
@@ -30,4 +22,3 @@ func main() {
 		fmt.Println("Error:", err)
 	}
 }
-```
