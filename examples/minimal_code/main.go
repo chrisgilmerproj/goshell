@@ -11,10 +11,10 @@ var CC = &gs.CommandChain{} // CommandChain shortcut
 
 func main() {
 	// Using [][]string instead of []gs.Command
-	output, err := CC.X([][]string{
+	output, err := CC.Run([][]string{
 		{"echo", "Hello, World!"},
 		{"tr", "[A-Z]", "[a-z]"},
-	}).Run()
+	})
 
 	if err != nil {
 		log.Fatalf("Error running command chain: %v", err)

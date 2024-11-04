@@ -9,14 +9,25 @@ import (
 )
 
 func main() {
+	// Set env vars in the environment
 	os.Setenv("HELLO_WORLD", "hello, world!")
 	defer os.Unsetenv("HELLO_WORLD")
 
-	output, err := (&goshell.CommandChain{}).
-		X([]goshell.Command{
-			{"bash", "-c", "echo $MY_ENV_VAR"},
-		}).
-		Run()
+	// Set env vars in the command chain
+	CC := goshell.NewCommandChain(map[string]string{"ANOTHER_WORLD": "another, world!"})
+
+	output, err := CC.Run([]goshell.Command{
+		{"bash", "-c", "echo $HELLO_WORLD"},
+	})
+
+	if err != nil {
+		log.Fatalf("Error running command chain: %v", err)
+	}
+	fmt.Println(output)
+
+	output, err = CC.Run([]goshell.Command{
+		{"bash", "-c", "echo $ANOTHER_WORLD"},
+	})
 
 	if err != nil {
 		log.Fatalf("Error running command chain: %v", err)

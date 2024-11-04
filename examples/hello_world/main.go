@@ -13,10 +13,9 @@ func main() {
 	}
 
 	output, err := goshell.NewCommandChain(envVars).
-		X([]goshell.Command{
+		Run([]goshell.Command{
 			{"echo", "Hello, World!"}, // Example command
-		}).
-		Run()
+		})
 
 	if err != nil {
 		fmt.Println("Error:", err)

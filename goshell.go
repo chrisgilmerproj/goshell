@@ -49,8 +49,8 @@ func NewCommandChain(envVars map[string]string) *CommandChain {
 	}
 }
 
-// X function to execute a list of commands. X is for eXecute.
-func (cc *CommandChain) X(commands interface{}) *CommandChain {
+// Run executes the commands in the chain
+func (cc *CommandChain) Run(commands interface{}) (string, error) {
 	switch v := commands.(type) {
 	case []Command:
 		cc.commands = v
@@ -61,11 +61,7 @@ func (cc *CommandChain) X(commands interface{}) *CommandChain {
 	default:
 		panic("unsupported command type")
 	}
-	return cc
-}
 
-// Run executes the commands in the chain
-func (cc *CommandChain) Run() (string, error) {
 	var input *bytes.Buffer // Start with no input
 
 	for _, cmd := range cc.commands {
@@ -79,17 +75,18 @@ func (cc *CommandChain) Run() (string, error) {
 		}
 
 		// Capture the output
-		var buf bytes.Buffer
-		command.Stdout = &buf
-		command.Stderr = &buf // Capture stderr as well
+		var stdoutBuf bytes.Buffer
+		var stderrBuf bytes.Buffer
+		command.Stdout = &stdoutBuf
+		command.Stderr = &stderrBuf
 
 		// Execute the command
 		if err := command.Run(); err != nil {
-			return "", err // Return error if command fails
+			return stderrBuf.String(), err // Return error if command fails
 		}
 
 		// The output of the current command becomes the input for the next
-		input = &buf
+		input = &stdoutBuf
 	}
 
 	// Return the output from the last command

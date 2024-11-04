@@ -8,10 +8,9 @@ import (
 
 func main() {
 	_, err := (&goshell.CommandChain{}).
-		X([]goshell.Command{
+		Run([]goshell.Command{
 			{"invalid_command"},
-		}).
-		Run()
+		})
 
 	if err != nil {
 		log.Printf("Expected error running command chain: %v", err)
