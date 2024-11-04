@@ -12,7 +12,7 @@ func main() {
 		"MY_ENV_VAR": "my_value",
 	}
 
-	err := goshell.NewCommandChain(envVars).
+	output, err := goshell.NewCommandChain(envVars).
 		X([]goshell.Command{
 			{"echo", "Hello, World!"}, // Example command
 		}).
@@ -21,4 +21,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
+
+	fmt.Println(output)
 }

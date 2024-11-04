@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	err := (&goshell.CommandChain{}).
+	_, err := (&goshell.CommandChain{}).
 		X([]goshell.Command{
 			{"invalid_command"},
 		}).

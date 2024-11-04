@@ -80,7 +80,7 @@ func TestCommandChain(t *testing.T) {
 			}
 
 			// Execute the command chain
-			err := c.X(tt.command).Run()
+			_, err := c.X(tt.command).Run()
 
 			// Check for expected error
 			if (err != nil) != tt.wantErr {

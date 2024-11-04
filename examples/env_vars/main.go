@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -8,10 +9,10 @@ import (
 )
 
 func main() {
-	os.Setenv("MY_ENV_VAR", "my_value")
-	defer os.Unsetenv("MY_ENV_VAR")
+	os.Setenv("HELLO_WORLD", "hello, world!")
+	defer os.Unsetenv("HELLO_WORLD")
 
-	err := (&goshell.CommandChain{}).
+	output, err := (&goshell.CommandChain{}).
 		X([]goshell.Command{
 			{"bash", "-c", "echo $MY_ENV_VAR"},
 		}).
@@ -20,4 +21,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error running command chain: %v", err)
 	}
+	fmt.Println(output)
 }

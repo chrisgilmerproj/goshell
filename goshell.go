@@ -16,6 +16,7 @@ type CommandChain struct {
 	output       []byte
 	err          error
 	envVariables []string
+	commands     []Command
 }
 
 // NewCommandChain creates a new CommandChain with optional environment variables
@@ -49,41 +50,48 @@ func NewCommandChain(envVars map[string]string) *CommandChain {
 }
 
 // X function to execute a list of commands. X is for eXecute.
-func (c *CommandChain) X(commands []Command) *CommandChain {
-	// If there's already an error, skip execution
-	if c.err != nil {
-		return c
-	}
-
-	// Execute each command in the list
-	for _, cmd := range commands {
-		// Prepare the command
-		execCmd := exec.Command(cmd[0], cmd[1:]...)
-		execCmd.Env = c.envVariables // Set the environment variables
-
-		// Pass the output from the previous command as stdin to the next
-		if c.output != nil {
-			execCmd.Stdin = bytes.NewReader(c.output)
+func (cc *CommandChain) X(commands interface{}) *CommandChain {
+	switch v := commands.(type) {
+	case []Command:
+		cc.commands = v
+	case [][]string:
+		for _, cmd := range v {
+			cc.commands = append(cc.commands, Command(cmd))
 		}
-
-		// Run the command and capture the output and errors
-		c.output, c.err = execCmd.Output()
-		if c.err != nil {
-			return c // Exit if there's an error
-		}
+	default:
+		panic("unsupported command type")
 	}
-
-	return c
+	return cc
 }
 
-// Run final output or return error
-func (c *CommandChain) Run() error {
-	// Return error if any occurred during the chain
-	if c.err != nil {
-		return c.err
+// Run executes the commands in the chain
+func (cc *CommandChain) Run() (string, error) {
+	var input *bytes.Buffer // Start with no input
+
+	for _, cmd := range cc.commands {
+		// Create command and set up input if necessary
+		command := exec.Command(cmd[0], cmd[1:]...) // Create command
+		command.Env = cc.envVariables               // Set environment variables
+
+		// If there is input from the previous command, set it as the command's stdin
+		if input != nil {
+			command.Stdin = input
+		}
+
+		// Capture the output
+		var buf bytes.Buffer
+		command.Stdout = &buf
+		command.Stderr = &buf // Capture stderr as well
+
+		// Execute the command
+		if err := command.Run(); err != nil {
+			return "", err // Return error if command fails
+		}
+
+		// The output of the current command becomes the input for the next
+		input = &buf
 	}
 
-	// Print the final output
-	fmt.Println(string(c.output))
-	return nil
+	// Return the output from the last command
+	return input.String(), nil
 }
