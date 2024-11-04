@@ -1,18 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/chrisgilmerproj/goshell"
 )
 
 func main() {
-	_, err := (&goshell.CommandChain{}).
-		Run([]goshell.Command{
+	output, err := (&goshell.CommandChain{}).
+		Run([][]string{
 			{"invalid_command"},
 		})
 
 	if err != nil {
-		log.Printf("Expected error running command chain: %v", err)
+		log.Fatalf("Error running command chain: %v", err)
 	}
+	fmt.Println(output)
 }

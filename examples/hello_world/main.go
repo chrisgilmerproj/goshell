@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/chrisgilmerproj/goshell"
 )
@@ -13,12 +14,12 @@ func main() {
 	}
 
 	output, err := goshell.NewCommandChain(envVars).
-		Run([]goshell.Command{
+		Run([][]string{
 			{"echo", "Hello, World!"}, // Example command
 		})
 
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Fatalf("Error running command chain: %v", err)
 	}
 
 	fmt.Println(output)

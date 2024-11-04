@@ -8,60 +8,68 @@ import (
 func TestCommandChain(t *testing.T) {
 	tests := []struct {
 		name    string
-		command []Command
+		command [][]string
 		wantErr bool
+		wantOut string
 	}{
 		{
 			name: "SingleCommand",
-			command: []Command{
+			command: [][]string{
 				{"echo", "Hello, World!"},
 			},
 			wantErr: false,
+			wantOut: "Hello, World!\n",
 		},
 		{
 			name: "MultipleCommands",
-			command: []Command{
+			command: [][]string{
 				{"echo", "Hello, World!"},
 				{"tr", "[A-Z]", "[a-z]"},
 			},
 			wantErr: false,
+			wantOut: "hello, world!\n",
 		},
 		{
 			name: "EnvironmentVariables",
-			command: []Command{
+			command: [][]string{
 				{"bash", "-c", "echo $MY_ENV_VAR"},
 			},
 			wantErr: false,
+			wantOut: "override_value\n",
 		},
 		{
 			name: "InvalidCommand",
-			command: []Command{
+			command: [][]string{
 				{"invalid_command"},
 			},
 			wantErr: true,
+			wantOut: "",
 		},
 		{
 			name: "CombinedCommands",
-			command: []Command{
+			command: [][]string{
 				{"echo", "Hello, World!"},
 				{"grep", "World"},
 			},
 			wantErr: false,
+			wantOut: "Hello, World!\n",
 		},
 		{
 			name: "OutputCapture",
-			command: []Command{
+			command: [][]string{
 				{"echo", "Test Output"},
 			},
 			wantErr: false,
+			wantOut: "Test Output\n",
 		},
 		{
 			name: "NestedCommands",
-			command: []Command{
+			command: [][]string{
 				{"echo", "Nested Command"},
 				{"tr", "[a-z]", "[A-Z]"},
 			},
 			wantErr: false,
+			wantOut: "NESTED COMMAND\n",
 		},
 	}
 
@@ -80,11 +88,14 @@ func TestCommandChain(t *testing.T) {
 			}
 
 			// Execute the command chain
-			_, err := c.Run(tt.command)
+			out, err := c.Run(tt.command)
 
 			// Check for expected error
 			if (err != nil) != tt.wantErr {
-				t.Errorf("expected error: %v, got: %v", tt.wantErr, err)
+				t.Errorf("expected error in test %s: %v, got: %v, stderr: %s", tt.name, tt.wantErr, err, out)
+			}
+			if out != tt.wantOut {
+				t.Errorf("expected output in test %s: %s, got: %s", tt.name, tt.wantOut, out)
 			}
 		})
 	}

@@ -16,7 +16,7 @@ func main() {
 	// Set env vars in the command chain
 	CC := goshell.NewCommandChain(map[string]string{"ANOTHER_WORLD": "another, world!"})
 
-	output, err := CC.Run([]goshell.Command{
+	output, err := CC.Run([][]string{
 		{"bash", "-c", "echo $HELLO_WORLD"},
 	})
 
@@ -25,7 +25,7 @@ func main() {
 	}
 	fmt.Println(output)
 
-	output, err = CC.Run([]goshell.Command{
+	output, err = CC.Run([][]string{
 		{"bash", "-c", "echo $ANOTHER_WORLD"},
 	})
 

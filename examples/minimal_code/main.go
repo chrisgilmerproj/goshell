@@ -10,7 +10,6 @@ import (
 var CC = &gs.CommandChain{} // CommandChain shortcut
 
 func main() {
-	// Using [][]string instead of []gs.Command
 	output, err := CC.Run([][]string{
 		{"echo", "Hello, World!"},
 		{"tr", "[A-Z]", "[a-z]"},

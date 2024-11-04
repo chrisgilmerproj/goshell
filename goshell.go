@@ -8,15 +8,12 @@ import (
 	"strings"
 )
 
-// Command type as a slice of strings
-type Command []string
-
 // CommandChain struct to store output, errors, and environment variables
 type CommandChain struct {
 	output       []byte
 	err          error
 	envVariables []string
-	commands     []Command
+	commands     [][]string
 }
 
 // NewCommandChain creates a new CommandChain with optional environment variables
@@ -50,19 +47,9 @@ func NewCommandChain(envVars map[string]string) *CommandChain {
 }
 
 // Run executes the commands in the chain
-func (cc *CommandChain) Run(commands interface{}) (string, error) {
-	switch v := commands.(type) {
-	case []Command:
-		cc.commands = v
-	case [][]string:
-		for _, cmd := range v {
-			cc.commands = append(cc.commands, Command(cmd))
-		}
-	default:
-		panic("unsupported command type")
-	}
-
+func (cc *CommandChain) Run(commands [][]string) (string, error) {
 	var input *bytes.Buffer // Start with no input
+	cc.commands = commands  // Set the commands
 
 	for _, cmd := range cc.commands {
 		// Create command and set up input if necessary
