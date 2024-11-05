@@ -1,7 +1,8 @@
 # GO Shell
 
-This is a golang package used to imitate piping utilities
-in the shell
+<img src="./goshell.png" width="128">
+
+A golang package used to imitate piping utilities in the shell.
 
 ## Example
 
