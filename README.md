@@ -10,24 +10,36 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/chrisgilmerproj/goshell"
 )
 
 func main() {
-	// Use your library
-	envVars := map[string]string{
-		"MY_ENV_VAR": "my_value",
-	}
+	// Set env vars in the environment
+	os.Setenv("HELLO_WORLD", "hello, world!")
+	defer os.Unsetenv("HELLO_WORLD")
 
-	err := goshell.NewCommandChain(envVars).
-		X([]goshell.Command{
-			{"echo", "Hello, World!"}, // Example command
-		}).
-		Run()
+	// Set env vars in the command chain
+	CC := goshell.NewCommandChain(map[string]string{"ANOTHER_WORLD": "another, world!"})
+
+	output, err := CC.Run([][]string{
+		{"bash", "-c", "echo $HELLO_WORLD"},
+	})
 
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Fatalf("Error running command chain: %v", err)
 	}
+	fmt.Println(output)
+
+	output, err = CC.Run([][]string{
+		{"bash", "-c", "echo $ANOTHER_WORLD"},
+	})
+
+	if err != nil {
+		log.Fatalf("Error running command chain: %v", err)
+	}
+	fmt.Println(output)
 }
 ```
