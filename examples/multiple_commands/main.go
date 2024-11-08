@@ -16,7 +16,7 @@ func main() {
 
 	output, err := CC.Run([][]string{
 		{"bash", "-c", "echo $HELLO_WORLD"},
-		{"tr", "a-z", "A-Z"},
+		{"tr", "[:lower:]", "[:upper:]"},
 	})
 
 	if err != nil {

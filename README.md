@@ -27,7 +27,7 @@ good example of what you might encounter:
 
 set -euo pipefail
 
-HELLO_WORLD="hello, world!" bash -c 'echo $HELLO_WORLD' | tr 'a-z' 'A-Z'
+HELLO_WORLD="hello, world!" bash -c 'echo $HELLO_WORLD' | tr '[:lower:]' '[:upper:]'
 ```
 
 The output would be: `HELLO, WORLD!`.
@@ -53,7 +53,7 @@ func main() {
 
 	output, err := CC.Run([][]string{
 		{"bash", "-c", "echo $HELLO_WORLD"},
-		{"tr", "[a-z]", "[A-Z]"},
+		{"tr", "[:lower:]", "[:upper:]"},
 	})
 
 	if err != nil {
